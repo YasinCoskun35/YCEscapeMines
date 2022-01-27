@@ -1,16 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using YCEscapeMines.Models.CustomTypes;
+using static YCEscapeMines.Models.CustomTypes.Enums;
 using YCEscapeMines.Models;
-using static YCEscapeMines.Models.Enums;
 
 namespace YCEscapeMines.Utilities
 {
     public class GameHelper
     {
+        /// <summary>
+        /// Generates board tiles in a two dimensional array 
+        /// </summary>
+        /// <param name="x">Row number of array</param>
+        /// <param name="y">Column number of array</param>
+        /// <returns>Two dimensional array of Tile object</returns>
         public static Tile[,] GenerateTiles(int x, int y)
         {
             var tiles = new Tile[x, y];
@@ -26,6 +28,12 @@ namespace YCEscapeMines.Utilities
             }
             return tiles;
         }
+        /// <summary>
+        /// Creates mine on Game Board 
+        /// </summary>
+        /// <param name="gameSettings">Game setting object with reference to get mine positions</param>
+        /// <param name="board">Game board with reference to put mines on it.</param>
+        /// <exception cref="InvalidGameSettingException">Throws InvalidGameSettingException if a mine position is not empty to put mine on it.</exception>
         public static void CreateMinesOnBoard(GameSetting gameSettings, ref Tile[,] board)
         {
             foreach (var mineCoordinate in gameSettings.MineCoordinates)
@@ -36,10 +44,16 @@ namespace YCEscapeMines.Utilities
                 }
                 else
                 {
-                    throw new Exception("An error occured while putting mines into game board.Please edit mine coordinates from your game setting file.");
+                    throw new InvalidGameSettingException("An error occured while putting mines into game board.Please edit mine coordinates from your game setting file.");
                 }
             }
         }
+        /// <summary>
+        /// Creates exit location on board.
+        /// </summary>
+        /// <param name="gameSettings">Game setting object with reference to get exit position</param>
+        /// <param name="board">Game board with reference to put exit point on it.</param>
+        /// <exception cref="InvalidGameSettingException">Throws InvalidGameSettingException if exit position is not empty to put exit location on it</exception>
         public static void CreateExitOnBoard(GameSetting gameSettings, ref Tile[,] board)
         {
 
@@ -49,23 +63,28 @@ namespace YCEscapeMines.Utilities
             }
             else
             {
-                throw new Exception("An error occured while putting exit point to game board please edit exit point from your game setting file.");
+                throw new InvalidGameSettingException("An error occured while putting exit point to game board please edit exit point from your game setting file.");
             }
 
         }
-
+        /// <summary>
+        /// Changes turtle's direction on current location.
+        /// </summary>
+        /// <param name="action">TurtleAction enum to set Direction whether it turns to Left or Right.It should be sent as R or L</param>
+        /// <param name="location">TurtleLocation object to get current direction of turtle</param>
+        /// <returns>Directions enum to set new direction of turtle.</returns>
         public static Directions ChangeDirection(TurtleAction action, TurtleLocation location)
         {
-            if (location.Direction == Directions.N)
-                return TurtleAction.R == action ? Directions.E : Directions.W;
-            else if (location.Direction == Directions.E)
-                return TurtleAction.R == action ? Directions.S : Directions.W;
-            else if (location.Direction == Directions.S)
-                return TurtleAction.R == action ? Directions.W : Directions.E;
-            else
-                return TurtleAction.R == action ? Directions.N : Directions.S;
-
+            int currentEnum = (int)location.Direction;
+            var nextDirection= TurtleAction.R == action ? (currentEnum + 1) % 4 : (currentEnum + 3)%4;
+            return (Directions)nextDirection;
         }
+        /// <summary>
+        /// Moves turtle to the next position according to it's direction if next move position is within board limits
+        /// </summary>
+        /// <param name="boardSize">Point object to check board size for turtle's next move</param>
+        /// <param name="location">Current location of turtle to move turtle next position</param>
+        /// <returns></returns>
         public static TurtleLocation MoveTurtle(Point boardSize, TurtleLocation location)
         {
             if(location.Direction == Directions.N && location.Position.X >= 0)
@@ -86,6 +105,11 @@ namespace YCEscapeMines.Utilities
             }
             return location;
         }
+        /// <summary>
+        /// Checks move if turtle hits a mine or reach exit point.Otherwise game will continue
+        /// </summary>
+        /// <param name="targetTile">Tile object which turtle just moved into</param>
+        /// <returns>Result enum to check game result</returns>
         public static Result CheckMove(Tile targetTile)
         {
             if (targetTile.IsExit)

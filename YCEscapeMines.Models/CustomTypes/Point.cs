@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YCEscapeMines.Models
+namespace YCEscapeMines.Models.CustomTypes
 {
     public class Point
     {

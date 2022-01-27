@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using static YCEscapeMines.Models.Enums;
+using static YCEscapeMines.Models.CustomTypes.Enums;
 
-namespace YCEscapeMines.Models
+namespace YCEscapeMines.Models.CustomTypes
 {
     public class GameSetting
     {

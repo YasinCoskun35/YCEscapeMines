@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace YCEscapeMines.Models
+namespace YCEscapeMines.Models.CustomTypes
 {
     public class Tile
     {

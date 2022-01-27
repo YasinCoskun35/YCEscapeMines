@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using YCEscapeMines.Models;
+using YCEscapeMines.Models.CustomTypes;
 using YCEscapeMines.Utilities;
 
 namespace YCEscapeMines.Services
@@ -12,17 +12,27 @@ namespace YCEscapeMines.Services
     {
         private GameSetting gameSettings;
         private Simulation simulation;
+        /// <summary>
+        /// Creates a GameService object with GameSetting to execute game.
+        /// </summary>
+        /// <param name="settings"></param>
         public GameService(GameSetting settings)
         {
             this.gameSettings = settings;
             simulation = new Simulation();
             simulation.Result = Enums.Result.Continue;
         }
+        /// <summary>
+        /// Executes game after creating game simulation with game settings.
+        /// </summary>
         public void ExecuteGame()
         {
             CreateGameSimulation();
             StartGameSimulation();
         }
+        /// <summary>
+        /// Creates game simulation to execute with game settings.
+        /// </summary>
         private void CreateGameSimulation()
         {
             simulation.Board = GameHelper.GenerateTiles(gameSettings.BoardSize.X, gameSettings.BoardSize.Y);
@@ -33,6 +43,9 @@ namespace YCEscapeMines.Services
             simulation.CurrentLocation = gameSettings.StartPoint;
             simulation.Board = tempBoard;
         }
+        /// <summary>
+        /// Starts game simulation and executes it while game is running.
+        /// </summary>
         private void StartGameSimulation()
         {
             Console.WriteLine("Game has started !!");
@@ -40,10 +53,14 @@ namespace YCEscapeMines.Services
             {
                 ExecuteAction();
             } while (IsGameOn());
-            Console.WriteLine("Game check");
         }
+        /// <summary>
+        /// Checks if game is not reached a result or is there any move to execute.
+        /// </summary>
+        /// <returns></returns>
         private bool IsGameOn()
         {
+            //If there are no remaining moves game should stop
             bool isRunning = gameSettings.Moves.Count > 0;
             
             switch (simulation.Result)
@@ -66,6 +83,9 @@ namespace YCEscapeMines.Services
             }
             return isRunning; 
         }
+        /// <summary>
+        /// Executes a action from moves list from game settings and pops the executed action.
+        /// </summary>
         private void ExecuteAction()
         {
             var nextMove=gameSettings.Moves.FirstOrDefault();

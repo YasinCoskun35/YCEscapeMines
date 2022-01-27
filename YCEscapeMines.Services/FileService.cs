@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using YCEscapeMines.Models;
+using YCEscapeMines.Models.CustomTypes;
 using YCEscapeMines.Utilities;
 
 namespace YCEscapeMines.Services
@@ -25,7 +26,7 @@ namespace YCEscapeMines.Services
                     using (StreamReader reader = new StreamReader(fileStream))
                     {
                         setting.BoardSize = FileHelper.ReadPoint(reader.ReadLine());
-                        setting.MineCoordinates = FileHelper.ReadPointSerie(reader.ReadLine());
+                        setting.MineCoordinates = FileHelper.ReadPoints(reader.ReadLine());
                         setting.ExitPoint = FileHelper.ReadPoint(reader.ReadLine());
                         FileHelper.ReadStartPosition(ref setting, reader.ReadLine());
                         setting.Moves = FileHelper.ReadActions(reader.ReadToEnd());

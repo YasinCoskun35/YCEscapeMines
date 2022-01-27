@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static YCEscapeMines.Models.Enums;
+using static YCEscapeMines.Models.CustomTypes.Enums;
 
-namespace YCEscapeMines.Models
+namespace YCEscapeMines.Models.CustomTypes
 {
     public class Simulation
     {
