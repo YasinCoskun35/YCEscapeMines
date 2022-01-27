@@ -15,7 +15,7 @@ namespace YCEscapeMines.Test
     public class GameHelperTest
     {
         [Fact]
-        public void CheckIfGameBoardCreationWorksProperly()
+        public void Check_GameBoardCreation_WorksProperly()
         {
             FileService fileService = new FileService();
             var gameSetting = fileService.ReadGameSetting("GameSettings.txt");
@@ -37,7 +37,7 @@ namespace YCEscapeMines.Test
             Assert.Equal(exptectesTilesJson, foundTilesJson);
         }
         [Fact]
-        public void CheckIfMineCreationThrowsExceptionWHENMultipleMineExist()
+        public void Check_MineCreation_ThrowsException_WHEN_MultipleMineExist()
         {
             FileService fileService = new FileService();
             var gameSetting = fileService.ReadGameSetting("MultipleMines.txt");
@@ -46,6 +46,45 @@ namespace YCEscapeMines.Test
             GameHelper.CreateMinesOnBoard(gameSetting, ref gameBoard);
             Assert.Throws<InvalidGameSettingException>(() => GameHelper.CreateMinesOnBoard(gameSetting, ref gameBoard));
             
+        }
+        [Fact]
+        public void Check_StartPosition_ThrowsException_WHEN_MineAlreadyExist()
+        {
+            FileService fileService = new FileService();
+            var gameSetting = fileService.ReadGameSetting("ExitAmbiguity.txt");
+            GameService gameSerivce = new GameService(gameSetting);
+            var gameBoard = GameHelper.GenerateTiles(gameSetting.BoardSize.X, gameSetting.BoardSize.Y);
+            GameHelper.CreateMinesOnBoard(gameSetting, ref gameBoard);
+            Assert.Throws<InvalidGameSettingException>(() => GameHelper.CreateExitOnBoard(gameSetting, ref gameBoard));
+
+        }
+        [Fact]
+        public void Check_ChangeDirection_WorksProperly()
+        {
+            var currentLocation = new TurtleLocation() { Direction = Enums.Directions.N };
+            var expectedDirection = Enums.Directions.W;
+            //Turn turtle direction to left
+            var foundDirection=GameHelper.ChangeDirection(Enums.TurtleAction.L, currentLocation);
+            Assert.Equal(expectedDirection, foundDirection);
+        }
+        [Fact]
+        public void Check_MovingTurtle_WorksProperly()
+        {
+            var boardSize = new Point( 4, 5) ;
+            var currentLocation = new TurtleLocation() { Direction = Enums.Directions.N,Position=new Point(2,3) };
+            var expectedLocation = new TurtleLocation() { Direction = Enums.Directions.N,Position=new Point(1,3) };
+            //Move turtle one unit on north direction
+            var foundLocation = GameHelper.MoveTurtle(boardSize, currentLocation);
+            var expectedLocationJson = JsonConvert.SerializeObject(expectedLocation);
+            var foundLocationJson = JsonConvert.SerializeObject(foundLocation);
+            Assert.Equal(expectedLocationJson, foundLocationJson);
+        }
+        public void CheckIf_ResultCheck_WinGame_WHEN_Target_IsExit()
+        {
+            Tile targetTile=new Tile() { IsExit = true ,IsMine=false};
+            var foundResult=GameHelper.CheckMove(targetTile);
+            var expectedResult = Enums.Result.Win;
+            Assert.Equal(expectedResult, foundResult);
         }
     }
 }
